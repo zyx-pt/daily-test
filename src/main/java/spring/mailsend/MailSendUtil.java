@@ -1,4 +1,4 @@
-package mail;
+package spring.mailsend;
 
 import constant.PropertiesConstant;
 import freemarker.template.Configuration;

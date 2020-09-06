@@ -1,4 +1,4 @@
-package mail;
+package spring.mailsend;
 
 /**
  * @Author zhengyongxian

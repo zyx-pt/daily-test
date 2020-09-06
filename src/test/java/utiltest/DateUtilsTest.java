@@ -5,6 +5,7 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.junit.Test;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -45,6 +46,15 @@ public class DateUtilsTest {
     public void test()throws Exception{
         String str = "2020-7-23";
         Date str2Date2 = DateUtils.parseDate(str, "yyyy-MM-dd");
+        int i = str2Date2.compareTo(new Date());
+        System.out.println(i);
+    }
+
+    @Test
+    public void test2()throws Exception{
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyy/MM/dd HH:mm:ss");
+        String str = "2020/7/23";
+        Date str2Date2 = dateFormat.parse(str);
         int i = str2Date2.compareTo(new Date());
         System.out.println(i);
     }

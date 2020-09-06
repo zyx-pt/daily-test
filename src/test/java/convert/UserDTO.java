@@ -23,7 +23,7 @@ public class UserDTO {
     private int age;
 
     /**
-     * DTO -> User
+     * DTO -> Account
      * @return
      */
     public User convertToUser(){
@@ -33,7 +33,7 @@ public class UserDTO {
     }
 
     /**
-     * User -> DTO
+     * Account -> DTO
      * @param user
      * @return
      */

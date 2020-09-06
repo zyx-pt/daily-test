@@ -1,7 +1,6 @@
-package mail;
+package spring.mailsend;
 
 import javax.mail.MessagingException;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

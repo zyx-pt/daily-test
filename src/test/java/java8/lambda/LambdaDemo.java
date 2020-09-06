@@ -3,9 +3,15 @@ package java8.lambda;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class LambdaTest {
+/**
+ * @Description: lambda简单demo
+ *
+ * @Author: zhengyongxian
+ * @Date: 2020/8/17 22:05
+ */
+public class LambdaDemo {
    public static void main(String args[]){
-      LambdaTest tester = new LambdaTest();
+      LambdaDemo tester = new LambdaDemo();
         
       // 类型声明
       MathOperation addition = (int a, int b) -> a + b;
@@ -34,16 +40,21 @@ public class LambdaTest {
 
 
       // 引用外部变量
-      AtomicReference<String> str = new AtomicReference<>("Hello ");
+      int age = 18;
+      String name = "zyx";
+      AtomicReference<String> atomicStr = new AtomicReference<>("Hello ");
       AtomicInteger i = new AtomicInteger(18);
+
       GreetingService greetService3 = message ->{
-         String hehe = "hehe ";
-         i.set(2);
-         str.set(hehe);
-         System.out.println(str + message + i);
+         // 编译报错 不能在 lambda 内部修改定义在域外的局部变量
+         // age++;
+         // 不允许修改引用，name隐式的被声明为final
+         // name = "xxx";
+         i.set(25);
+         atomicStr.set("hehe");
+         System.out.println(atomicStr +" and " + message + " age: " + i);
       };
 
-        
       greetService1.sayMessage("Runoob");
       greetService2.sayMessage("Google");
       greetService3.sayMessage("zyx");

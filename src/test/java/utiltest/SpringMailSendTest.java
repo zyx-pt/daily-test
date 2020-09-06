@@ -1,11 +1,10 @@
 package utiltest;
 
-import mail.MailSendParameters;
-import mail.MailSendUtil;
+import spring.mailsend.MailSendParameters;
+import spring.mailsend.MailSendUtil;
 import org.junit.Test;
 
 import javax.mail.MessagingException;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

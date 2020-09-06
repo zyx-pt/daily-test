@@ -2,18 +2,24 @@ package entity;
 
 import java.util.Date;
 
-public class User{
+public class Account {
     private String name;
     private int age;
+    private String address;
     private Date birthDay;
 
-    public User() {
+    public Account() {
     }
 
-    public User(String name, int age, Date birthDay) {
+    public Account(String name, int age) {
         this.name = name;
         this.age = age;
-        this.birthDay = birthDay;
+    }
+
+    public Account(String name, int age, String address) {
+        this.name = name;
+        this.age = age;
+        this.address = address;
     }
 
     public String getName() {
@@ -30,6 +36,14 @@ public class User{
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public Date getBirthDay() {

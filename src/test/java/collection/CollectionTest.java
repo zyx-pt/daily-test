@@ -1,6 +1,6 @@
 package collection;
 
-import entity.User;
+import entity.Account;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
@@ -94,8 +94,8 @@ public class CollectionTest {
      */
     @Test
     public void testNull(){
-        User user = new User("xxx", 11, new Date());
-        System.out.println(user == null);   // false
+        Account account = new Account("xxx", 11);
+        System.out.println(account == null);   // false
 
         String[] strs1 = StringUtils.split("111", ";");  // {"111"} "111;"->{"111"}
         String[] strs2 = StringUtils.split(null, ";");   // null
@@ -188,15 +188,15 @@ public class CollectionTest {
      */
     @Test
     public void test(){
-        List<User> users = new ArrayList();
-        users.add(new User("zyx", 18, new Date()));
-        users.add(new User("hh", 18, new Date()));
-        users.add(new User(null, 18, new Date()));
-        List<String> names1 = users.stream().map(User::getName).collect(Collectors.toList());
+        List<Account> accounts = new ArrayList();
+        accounts.add(new Account("zyx", 18));
+        accounts.add(new Account("hh", 18));
+        accounts.add(new Account(null, 18));
+        List<String> names1 = accounts.stream().map(Account::getName).collect(Collectors.toList());
         System.out.println(names1);// [zyx, hh, null]
-        List<String> names2 = users.stream()
+        List<String> names2 = accounts.stream()
                 .filter(item->StringUtils.isNotBlank(item.getName()))
-                .map(User::getName)
+                .map(Account::getName)
                 .collect(Collectors.toList());
         System.out.println(names2);// [zyx, hh]
     }

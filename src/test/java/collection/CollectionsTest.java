@@ -50,12 +50,13 @@ public class CollectionsTest {
 
         // 定制排序的用法
         Collections.sort(arrayList, new Comparator<Integer>() {
-
             @Override
             public int compare(Integer o1, Integer o2) {
                 return o2.compareTo(o1);
             }
         });
+        // 使用lambda替换
+        // Collections.sort(arrayList, (o1, o2) -> o2.compareTo(o1));
         System.out.println("定制排序后：");
         System.out.println(arrayList);
         System.out.println();

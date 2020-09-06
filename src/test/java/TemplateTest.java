@@ -1,5 +1,6 @@
 import org.junit.Test;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -30,10 +31,19 @@ public class TemplateTest {
     @Test
     public void test2(){
 
+        BigDecimal num1 = new BigDecimal("1");
+        BigDecimal num2 = new BigDecimal(1);
+        boolean result = num1.compareTo(num2)==0;
+        System.out.println();
     }
     
     @Test
     public void test3(){
+        String str1 = new String("111");
+        String str2 = new String("111");
+        System.out.println(str1.hashCode());
+        System.out.println(str2.hashCode());
+        System.out.println(str1 != str2);
 
     }
 }

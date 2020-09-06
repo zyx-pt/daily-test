@@ -86,6 +86,7 @@ public class ReflectionTest {
         // 为了对类中private成员变量进行修改，取消类的安全检查
         field.setAccessible(true);
         field.set(targetObject, "zyx");
+        System.out.println(field.get(targetObject));
         System.out.println(field.getType());    // 获取成员变量类型
 
         // 调用private方法
