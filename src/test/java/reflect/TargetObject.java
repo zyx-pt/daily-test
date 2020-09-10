@@ -5,8 +5,8 @@ package reflect;
  * @Author zhengyongxian
  * @Date 2020/5/7
  */
-
-public class TargetObject {
+@MyAnnotation(name = "xxx", value = "xxx")
+public class TargetObject extends SuperClass implements IService{
     private String value;
     public String publicValue;
 
@@ -14,8 +14,13 @@ public class TargetObject {
         value = "JavaGuide";
     }
 
-    private TargetObject(String value){
+    public TargetObject(String value){
         this.value = value;
+    }
+
+    private TargetObject(String value, String publicValue){
+        this.value = value;
+        this.publicValue = publicValue;
     }
 
     public void publicMethod(String s) {
@@ -24,5 +29,26 @@ public class TargetObject {
 
     private void privateMethod() {
         System.out.println("I is " + value);
+    }
+
+    @MyMethodAnno
+    public void testMethodAnnotation(){
+
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    public String getPublicValue() {
+        return publicValue;
+    }
+
+    public void setPublicValue(String publicValue) {
+        this.publicValue = publicValue;
     }
 }

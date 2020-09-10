@@ -33,20 +33,29 @@ public class StreamForCollectionTest {
         List<Account> filterAccountByAge = accountList.stream()
                 .filter(item -> item.getAge() > 18).collect(Collectors.toList());
 
+        /** groupingBy 统计的使用 */
+        System.out.println("----------------groupingBy----------------");
         /** 统计集合中某一属性的个数，用Map返回 */
-        Map<String, Long> groupAccountByName = accountList.stream()
+        Map<String, Long> nameCountMap = accountList.stream()
                 .filter(p -> StringUtils.isNotEmpty(p.getName()))
                 .collect(Collectors.groupingBy(Account::getName, Collectors.counting()));
-        System.out.println(groupAccountByName);
+        System.out.println("name -> count"+nameCountMap);
         /** 把集合存储到Map中，key为某个属性，value为集合 */
-        Map<Integer, List<Account>> ageToList = accountList.stream()
-                .collect(Collectors.groupingBy(Account::getAge, Collectors.toList()));
-        System.out.println(ageToList);
+        Map<Integer, List<Account>> ageToListMap = accountList.stream()
+//                .collect(Collectors.groupingBy(Account::getAge, Collectors.toList()));
+                .collect(Collectors.groupingBy(Account::getAge));
+        System.out.println("age -> list："+ageToListMap);
+        /** 累加求和 */
+        Map<String, Integer> nameToCountAgeMap = accountList.stream()
+                .collect(Collectors.groupingBy(Account::getName, Collectors.summingInt(Account::getAge)));
+        System.out.println("name -> ageCount："+nameToCountAgeMap);
+
         /** 获取集合中某个属性不重复的集合 */
         List<String> distinctAccountByName = accountList.stream()
                 .map(Account::getName).distinct().collect(Collectors.toList());
 
         /** 把集合存储到Map中，key为某个属性，value为另一个属性 */
+        System.out.println("----------------toMap----------------");
         Map<String, String> nameToAddressMap1 = accountList.stream()
                 .collect(Collectors.toMap(Account::getName, Account::getAddress, (oldValue, newValue)->newValue));
         Map<String, String> nameToAddressMap2 = accountList.stream()
@@ -93,7 +102,7 @@ public class StreamForCollectionTest {
 
         // sorted排序
         Random random = new Random();
-        random.ints().limit(10).sorted().forEach(System.out::println);
+//        random.ints().limit(10).sorted().forEach(System.out::println);
 
         // parallel并行
         List<String> strings = Arrays.asList("abc", "", "bc", "efg", "abcd","", "jkl");
@@ -101,12 +110,14 @@ public class StreamForCollectionTest {
         Long count = strings.parallelStream().filter(StringUtils::isEmpty).count();
 
         // Collectors归约操作toList toMap counting joining
+        System.out.println("-----------筛选------------");
         List<String> filtered = strings.stream().filter(StringUtils::isNotEmpty).collect(Collectors.toList());
         System.out.println("筛选列表: " + filtered);
         String mergedString = strings.stream().filter(StringUtils::isNotEmpty).collect(Collectors.joining(","));
         System.out.println("合并字符串: " + mergedString);
 
         // 统计 使用统计结果的收集器
+        System.out.println("------------统计收集器的使用-------------");
         List<Integer> numbers = Arrays.asList(3, 2, 2, 3, 7, 3, 5);
         IntSummaryStatistics stats = numbers.stream().mapToInt((x) -> x).summaryStatistics();
         System.out.println("列表中最大的数 : " + stats.getMax());
