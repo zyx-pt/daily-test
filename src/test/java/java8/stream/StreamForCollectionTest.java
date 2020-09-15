@@ -5,7 +5,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -24,14 +26,17 @@ public class StreamForCollectionTest {
         accountList.add(new Account("zxc", 18, "xiamen"));
         accountList.add(new Account("hehe", 21, "hangzhou"));
         accountList.add(new Account("zyx", 24, "putian"));
-        accountList.add(new Account("zyx", 24, "jiangsu"));
+        accountList.add(new Account("zyx", 24, "putian"));
 
-        int countUserByAge = (int) accountList.stream()
-                .filter(p -> p.getAge() > 18).count();
-
+        /** 获取集合中某个属性不重复的集合 */
+        List<String> distinctAccountByName = accountList.stream()
+                .map(Account::getName).distinct().collect(Collectors.toList());
         /** 筛选集合中符合某些条件 */
         List<Account> filterAccountByAge = accountList.stream()
                 .filter(item -> item.getAge() > 18).collect(Collectors.toList());
+        /** 根据某一属性筛选 (去重) */
+        List<Account> distinctByName = accountList.stream()
+                .filter(distinctByName(Account::getName)).collect(Collectors.toList());
 
         /** groupingBy 统计的使用 */
         System.out.println("----------------groupingBy----------------");
@@ -49,10 +54,10 @@ public class StreamForCollectionTest {
         Map<String, Integer> nameToCountAgeMap = accountList.stream()
                 .collect(Collectors.groupingBy(Account::getName, Collectors.summingInt(Account::getAge)));
         System.out.println("name -> ageCount："+nameToCountAgeMap);
-
-        /** 获取集合中某个属性不重复的集合 */
-        List<String> distinctAccountByName = accountList.stream()
-                .map(Account::getName).distinct().collect(Collectors.toList());
+        /** 统计后拼接某一属性 */
+        Map<String, String> nameToJoinAddressMap = accountList.stream()
+                .collect(Collectors.groupingBy(Account::getName, Collectors.mapping(Account::getAddress, Collectors.joining(","))));
+        System.out.println("name -> join address："+nameToJoinAddressMap);
 
         /** 把集合存储到Map中，key为某个属性，value为另一个属性 */
         System.out.println("----------------toMap----------------");
@@ -155,5 +160,20 @@ public class StreamForCollectionTest {
         return map;
     }
 
+    /**
+     * @Description: 根据某一属性去重
+     *
+     * @Author: zhengyongxian
+     * @Date: 2020/9/14 14:07
+     * @param keyExtractor
+     * @return: java.util.function.Predicate<T>
+     */
+    private static <T> Predicate<T> distinctByName(Function<? super T, ?> keyExtractor) {
+        Map<Object, Boolean> seen = new ConcurrentHashMap<>();
+        return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
 
+        // putIfAbsent
+        // key不存在或者key已存在但是值为null --> put进去，返回结果null
+        // 如果结果等于null，说明该对象的不重复,返回true --> filter恰好会留下表达式为true的数据
+    }
 }

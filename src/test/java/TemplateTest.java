@@ -1,8 +1,14 @@
+import com.google.common.collect.Lists;
+import net.sf.json.JSONObject;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @Description:
@@ -26,6 +32,7 @@ public class TemplateTest {
         objects.forEach(x -> {
             System.out.println("cccc");
         });
+        System.out.println(objectObjectHashMap.get(null));
     }
 
     @Test
@@ -44,6 +51,17 @@ public class TemplateTest {
         System.out.println(str1.hashCode());
         System.out.println(str2.hashCode());
         System.out.println(str1 != str2);
+        List<String> list1 = Lists.newArrayList();
 
+        list1.add("xx");
+
+        List<String> collect = list1.stream().filter(item -> StringUtils.isEmpty(item)).collect(Collectors.toList());
+        List<String> collect1 = collect.stream().filter(StringUtils::isNotEmpty).collect(Collectors.toList());
+
+        Map<String, List<String>> map = new HashMap();
+        map.put("1111", list1);
+        System.out.println(map.get("xxx"));
+        JSONObject jsonObject = JSONObject.fromObject(map);
+        System.out.println("输出的结果是：" + jsonObject);
     }
 }

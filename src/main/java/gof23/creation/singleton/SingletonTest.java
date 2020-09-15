@@ -57,7 +57,7 @@ public class SingletonTest {
 	 */
 	public static void reflectionTest() throws Exception {
 		Class<SingletonDemo6> clazz = (Class<SingletonDemo6>) Class.forName("gof23.creation.singleton.SingletonDemo6");
-		Constructor<SingletonDemo6> c = clazz.getDeclaredConstructor(null);
+		Constructor<SingletonDemo6> c = clazz.getDeclaredConstructor((Class<?>) null);
 		c.setAccessible(true);
 		// 可通过对私有构造器添加限制
 		SingletonDemo6 s3 = c.newInstance();

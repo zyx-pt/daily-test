@@ -137,10 +137,10 @@ public class ReflectionTest {
         // 访问类注解信息
         Annotation[] classAnnotations = targetClass.getAnnotations();
         for(Annotation annotation : classAnnotations){
-            if(annotation instanceof MyAnnotation){
-                MyAnnotation myAnnotation = (MyAnnotation) annotation;
-                System.out.println("name: " + myAnnotation.name());
-                System.out.println("value: " + myAnnotation.value());
+            if(annotation instanceof MyClassAnnotation){
+                MyClassAnnotation myClassAnnotation = (MyClassAnnotation) annotation;
+                System.out.println("name: " + myClassAnnotation.name());
+                System.out.println("value: " + myClassAnnotation.value());
             }
         }
 

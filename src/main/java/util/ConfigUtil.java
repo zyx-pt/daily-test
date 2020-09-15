@@ -24,9 +24,9 @@ public class ConfigUtil {
       if (null == resource) {
          try {
             Method method = Thread.class.getMethod("getContextClassLoader",
-                  null);
+                    (Class<?>) null);
             classLoader = (ClassLoader) method.invoke(Thread
-                  .currentThread(), null);
+                  .currentThread(), (Object) null);
             resource = classLoader.getResource(DEFAULT_CONFIG_FILE);
          } catch (SecurityException | NoSuchMethodException | IllegalArgumentException 
 			| IllegalAccessException | InvocationTargetException e) {

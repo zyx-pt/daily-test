@@ -5,7 +5,7 @@ package reflect;
  * @Author zhengyongxian
  * @Date 2020/5/7
  */
-@MyAnnotation(name = "xxx", value = "xxx")
+@MyClassAnnotation(name = "xxx", value = "xxx")
 public class TargetObject extends SuperClass implements IService{
     private String value;
     public String publicValue;
