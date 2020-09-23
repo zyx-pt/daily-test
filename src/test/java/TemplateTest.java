@@ -1,4 +1,5 @@
 import com.google.common.collect.Lists;
+import entity.Account;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
@@ -59,9 +60,26 @@ public class TemplateTest {
         List<String> collect1 = collect.stream().filter(StringUtils::isNotEmpty).collect(Collectors.toList());
 
         Map<String, List<String>> map = new HashMap();
+        for (Map.Entry<String, List<String>> entry : map.entrySet()) {
+            String k = entry.getKey();
+            List<String> v = entry.getValue();
+        }
+        boolean empty = map.isEmpty();
+
         map.put("1111", list1);
         System.out.println(map.get("xxx"));
         JSONObject jsonObject = JSONObject.fromObject(map);
         System.out.println("输出的结果是：" + jsonObject);
+
+        List<Account> accountList = Lists.newArrayList();
+
+        Account account1 = new Account(null, 18);
+        Account account2 = new Account("hehe", 18);
+        accountList.add(account1);
+        accountList.add(account2);
+        // java.lang.NullPointerException: element cannot be mapped to a null key
+        // Map<String, List<Account>> collect2 = accountList.stream().collect(Collectors.groupingBy(Account::getName));
+        // System.out.println(collect2);
+
     }
 }

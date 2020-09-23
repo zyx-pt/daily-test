@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
+import java.util.List;
 
 /**
  * 演示反射的操作
@@ -18,6 +19,7 @@ public class ReflectionTest {
      * Field类	        代表类的成员变量（成员变量也称为类的属性）
      * Method类	        代表类的方法
      * Constructor类	代表类的构造方法
+     *
      * 方法                                      用途
      * forName(String className)	            根据类名返回类的对象
      * newInstance()	                        创建类的实例
@@ -133,31 +135,131 @@ public class ReflectionTest {
         Method privateMethod = targetClass.getDeclaredMethod("privateMethod");
         privateMethod.setAccessible(true);
         privateMethod.invoke(targetObject);
+    }
+
+    /**
+     * @Description: 注解的获取
+     *
+     * @Author: zhengyongxian
+     * @Date: 2020/9/21 16:03
+     * @param
+     * @return: void
+     */
+    @Test
+    public void testAnno() throws Exception {
+        Class targetClass = TargetObject.class;
 
         // 访问类注解信息
         Annotation[] classAnnotations = targetClass.getAnnotations();
         for(Annotation annotation : classAnnotations){
-            if(annotation instanceof MyClassAnnotation){
-                MyClassAnnotation myClassAnnotation = (MyClassAnnotation) annotation;
-                System.out.println("name: " + myClassAnnotation.name());
-                System.out.println("value: " + myClassAnnotation.value());
+            if(annotation instanceof MyClassAnno){
+                MyClassAnno myClassAnno = (MyClassAnno) annotation;
+                System.out.println("类注解信息 -> name: " + myClassAnno.name());
+                System.out.println("类注解信息 -> value: " + myClassAnno.value());
             }
         }
 
         // 访问方法注解信息
-        Method testMethodAnnotation = targetClass.getDeclaredMethod("testMethodAnnotation");
-        Annotation[] methodAnnotations = testMethodAnnotation.getDeclaredAnnotations();
+        Method annoMethod = targetClass.getDeclaredMethod("testMethodAnno");
+        Annotation[] methodAnnotations = annoMethod.getDeclaredAnnotations();
         for(Annotation annotation : methodAnnotations){
             if(annotation instanceof MyMethodAnno){
                 MyMethodAnno myAnnotation = (MyMethodAnno) annotation;
-                System.out.println("name: " + myAnnotation.name());
-                System.out.println("value: " + myAnnotation.value());
+                System.out.println("方法注解信息 -> name: " + myAnnotation.name());
+                System.out.println("方法注解信息 -> value: " + myAnnotation.value());
+            }
+        }
+        // 访问特定方法注解信息
+        Annotation myMethodAnno = annoMethod.getAnnotation(MyMethodAnno.class);
+        if(myMethodAnno instanceof MyMethodAnno){
+            MyMethodAnno myAnnotation = (MyMethodAnno) myMethodAnno;
+            System.out.println("特定方法注解信息 -> name: " + myAnnotation.name());
+            System.out.println("特定方法注解信息 -> value: " + myAnnotation.value());
+        }
+
+        // 访问参数注解信息
+        Method parameterAnnoMethod = targetClass.getDeclaredMethod("testParameterAnno", String.class);
+        Annotation[][] parameterAnnotations = parameterAnnoMethod.getParameterAnnotations();
+        Class[] parameterTypes = parameterAnnoMethod.getParameterTypes();
+        int i=0;
+        for(Annotation[] annotations : parameterAnnotations){
+            Class parameterType = parameterTypes[i++];
+            for(Annotation parameterAnno : annotations){
+                if(parameterAnno instanceof MyParameterAnno){
+                    MyParameterAnno myAnnotation = (MyParameterAnno) parameterAnno;
+                    System.out.println("参数param: " + parameterType.getName());
+                    System.out.println("参数注解信息 -> name : " + myAnnotation.name());
+                    System.out.println("参数注解信息 -> value: " + myAnnotation.value());
+                }
             }
         }
 
+        //访问类所有变量注解信息
+        Field field =  targetClass.getDeclaredField("variable");
+        Annotation[] fieldAnnotations = field.getDeclaredAnnotations();
+        for(Annotation fieldAnno : fieldAnnotations){
+            if(fieldAnno instanceof MyFieldAnno){
+                MyFieldAnno myAnnotation = (MyFieldAnno) fieldAnno;
+                System.out.println("变量注解信息 -> name: " + myAnnotation.name());
+                System.out.println("变量注解信息 -> value: " + myAnnotation.value());
+            }
+        }
+        // 访问类某个特定变量的注解信息
+        Annotation fieldAnnotation = field.getAnnotation(MyFieldAnno.class);
+        if( fieldAnnotation instanceof MyFieldAnno){
+            MyFieldAnno myAnnotation = (MyFieldAnno)  fieldAnnotation;
+            System.out.println("某个特定变量的注解信息 -> name: " + myAnnotation.name());
+            System.out.println("某个特定变量的注解信息  -> value: " + myAnnotation.value());
+        }
+    }
 
-        // 获取泛型信息
+    /**
+     * @Description: 泛型的获取
+     *
+     * @Author: zhengyongxian
+     * @Date: 2020/9/21 16:03
+     * @param
+     * @return: void
+     */
+    @Test
+    public void testGeneric() throws Exception{
+        // 获取返回值中的泛型
+        Method getStringListMethod = TargetObject.class.getMethod("getStringList", null);
+        Type returnType = getStringListMethod.getGenericReturnType();
+        if(returnType instanceof ParameterizedType){
+            ParameterizedType type = (ParameterizedType) returnType;
+            Type[] typeArguments = type.getActualTypeArguments();
+            for(Type typeArgument : typeArguments){
+                Class typeArgClass = (Class) typeArgument;
+                System.out.println("typeArgClass = " + typeArgClass);
+            }
+        }
 
+        // 获取方法中的泛型参数
+        Method setStringListMethod = TargetObject.class.getMethod("setStringList",  List.class);
+        Type[] genericParameterTypes = setStringListMethod.getGenericParameterTypes();
+        for(Type genericParameterType : genericParameterTypes){
+            if(genericParameterType instanceof ParameterizedType){
+                ParameterizedType aType = (ParameterizedType) genericParameterType;
+                Type[] parameterArgTypes = aType.getActualTypeArguments();
+                for(Type parameterArgType : parameterArgTypes){
+                    Class parameterArgClass = (Class) parameterArgType;
+                    System.out.println("parameterArgClass = " + parameterArgClass);
+                }
+            }
+        }
+
+        // 获取泛型变量
+        Field field = TargetObject.class.getDeclaredField("stringList");
+        Type genericFieldType = field.getGenericType();
+        if(genericFieldType instanceof ParameterizedType){
+            ParameterizedType aType = (ParameterizedType) genericFieldType;
+            Type[] fieldArgTypes = aType.getActualTypeArguments();
+            for(Type fieldArgType : fieldArgTypes){
+                Class fieldArgClass = (Class) fieldArgType;
+                System.out.println("fieldArgClass = " + fieldArgClass);
+            }
+        }
     }
 
     public static void printGettersSetters(Class aClass){

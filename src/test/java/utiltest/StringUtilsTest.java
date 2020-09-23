@@ -32,7 +32,7 @@ public class StringUtilsTest {
         String join3 = StringUtils.join(collect, ",");// a,b,c
 
         // 拆分字符串
-        String[] split = StringUtils.split("a.b.c", '.');
+        String[] split = StringUtils.split("a.b.c", ',');
         System.out.println("split:" + Arrays.toString(split));// ["a", "b", "c"]
 
         // 截取字符串 -> 左包含，右不包含

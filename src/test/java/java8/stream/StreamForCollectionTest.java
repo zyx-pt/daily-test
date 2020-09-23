@@ -37,6 +37,9 @@ public class StreamForCollectionTest {
         /** 根据某一属性筛选 (去重) */
         List<Account> distinctByName = accountList.stream()
                 .filter(distinctByName(Account::getName)).collect(Collectors.toList());
+        /** sorted 排序 */
+        List<Account> collect = accountList.stream()
+                .sorted(Comparator.comparing(Account::getAge)).collect(Collectors.toList());
 
         /** groupingBy 统计的使用 */
         System.out.println("----------------groupingBy----------------");
@@ -50,6 +53,14 @@ public class StreamForCollectionTest {
 //                .collect(Collectors.groupingBy(Account::getAge, Collectors.toList()));
                 .collect(Collectors.groupingBy(Account::getAge));
         System.out.println("age -> list："+ageToListMap);
+        /** 统计后按key进行排序 */
+        // TreeMap默认为按照key升序
+        TreeMap<String, List<Account>> orderByNameToListMap = accountList.stream()
+                .filter(item -> StringUtils.isNotEmpty(item.getName()))
+                .collect(Collectors.groupingBy(Account::getName, TreeMap::new, Collectors.toList()));
+
+        // 降序
+        NavigableMap<String, List<Account>> stringListNavigableMap = orderByNameToListMap.descendingMap();
         /** 累加求和 */
         Map<String, Integer> nameToCountAgeMap = accountList.stream()
                 .collect(Collectors.groupingBy(Account::getName, Collectors.summingInt(Account::getAge)));

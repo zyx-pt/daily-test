@@ -1,14 +1,23 @@
 package reflect;
 
+import java.util.List;
+
 /**
  * 创建一个我们要使用反射操作的类
  * @Author zhengyongxian
  * @Date 2020/5/7
  */
-@MyClassAnnotation(name = "xxx", value = "xxx")
+@MyClassAnno(name = "class", value = "TargetObject")
 public class TargetObject extends SuperClass implements IService{
+
     private String value;
+
     public String publicValue;
+
+    @MyFieldAnno(name = "variable", value = "xxxx")
+    private String variable;
+
+    private List<String> stringList;
 
     public TargetObject() {
         value = "JavaGuide";
@@ -28,11 +37,15 @@ public class TargetObject extends SuperClass implements IService{
     }
 
     private void privateMethod() {
-        System.out.println("I is " + value);
+        System.out.println("I am " + value);
     }
 
-    @MyMethodAnno
-    public void testMethodAnnotation(){
+    @MyMethodAnno(name = "method", value = "testMethodAnno")
+    public void testMethodAnno(){
+
+    }
+
+    public void testParameterAnno(@MyParameterAnno(value = "parameter",  name = "value") String value){
 
     }
 
@@ -50,5 +63,21 @@ public class TargetObject extends SuperClass implements IService{
 
     public void setPublicValue(String publicValue) {
         this.publicValue = publicValue;
+    }
+
+    public String getVariable() {
+        return variable;
+    }
+
+    public void setVariable(String variable) {
+        this.variable = variable;
+    }
+
+    public List<String> getStringList() {
+        return stringList;
+    }
+
+    public void setStringList(List<String> stringList) {
+        this.stringList = stringList;
     }
 }
