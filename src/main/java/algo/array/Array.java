@@ -20,10 +20,7 @@ public class Array {
         array.delete(3);
         array.printAll();
     }
-    // 定义整
-    //
-    //
-    // 型数据data保存数据
+    // 定义整型数据data保存数据
     private int[] data;
     // 定义数组长度
     private int n;

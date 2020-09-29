@@ -12,15 +12,16 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * @Description:
+ * @Description: 临时测验
  * @Author zhengyongxian
  * @Date 2020/6/22 22:11
  */
 public class TemplateTest {
     
     /**
-     * @Description: 
-     *
+     * @Description: 测试List Map的为空的循环问题
+     * 结论：对List Map的初始化不能赋空值null，故对所传List Map参数要判空
+     *      Map 中key可以为null
      * @Author: zhengyongxina
      * @Date: 2020/6/22 22:12
      * @param 
@@ -29,16 +30,38 @@ public class TemplateTest {
     @Test
     public void test1(){
         HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
+        // objectObjectHashMap = null; // java.lang.NullPointerException
+        objectObjectHashMap.forEach((k, v) -> {
+            System.out.println("aaaaa");
+        });
+        System.out.println(objectObjectHashMap.get(null));
+        objectObjectHashMap.put(null, "1111");
+        objectObjectHashMap.put(null, "2222");
+        System.out.println(objectObjectHashMap.get(null)); // 2222
+
         ArrayList<Object> objects = new ArrayList<>();
+        // objects = null; // java.lang.NullPointerException
         objects.forEach(x -> {
             System.out.println("cccc");
         });
-        System.out.println(objectObjectHashMap.get(null));
-    }
 
+    }
+    
+    /**
+     * @Description: 测试不同Lists初始化
+     *
+     * @Author: zhengyongxina
+     * @Date: 2020/9/28 15:49
+     * @return: void
+     */
     @Test
     public void test2(){
-
+        String str1 = null;
+        String str2 = "sss";
+        // com.google.common.collect.Lists可以使用这种方式初始化
+        List<String> stringList = Lists.newArrayList(str1, str2);
+        List<String> list = Lists.newArrayListWithCapacity(16);
+        System.out.println(StringUtils.join(stringList,"/"));
         BigDecimal num1 = new BigDecimal("1");
         BigDecimal num2 = new BigDecimal(1);
         boolean result = num1.compareTo(num2)==0;
@@ -80,6 +103,11 @@ public class TemplateTest {
         // java.lang.NullPointerException: element cannot be mapped to a null key
         // Map<String, List<Account>> collect2 = accountList.stream().collect(Collectors.groupingBy(Account::getName));
         // System.out.println(collect2);
+        // groupingBy前要进行过滤
+         Map<String, List<Account>> collect3= accountList.stream()
+                 .filter(item -> StringUtils.isNotEmpty(item.getName()))
+                 .collect(Collectors.groupingBy(Account::getName));
+         System.out.println(collect3);
 
     }
 }
