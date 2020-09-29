@@ -47,67 +47,42 @@ public class TemplateTest {
 
     }
     
-    /**
-     * @Description: 测试不同Lists初始化
-     *
-     * @Author: zhengyongxina
-     * @Date: 2020/9/28 15:49
-     * @return: void
-     */
     @Test
     public void test2(){
-        String str1 = null;
-        String str2 = "sss";
-        // com.google.common.collect.Lists可以使用这种方式初始化
-        List<String> stringList = Lists.newArrayList(str1, str2);
-        List<String> list = Lists.newArrayListWithCapacity(16);
-        System.out.println(StringUtils.join(stringList,"/"));
-        BigDecimal num1 = new BigDecimal("1");
-        BigDecimal num2 = new BigDecimal(1);
-        boolean result = num1.compareTo(num2)==0;
-        System.out.println();
-    }
-    
-    @Test
-    public void test3(){
         String str1 = new String("111");
         String str2 = new String("111");
         System.out.println(str1.hashCode());
         System.out.println(str2.hashCode());
         System.out.println(str1 != str2);
+
         List<String> list1 = Lists.newArrayList();
-
         list1.add("xx");
-
-        List<String> collect = list1.stream().filter(item -> StringUtils.isEmpty(item)).collect(Collectors.toList());
-        List<String> collect1 = collect.stream().filter(StringUtils::isNotEmpty).collect(Collectors.toList());
-
-        Map<String, List<String>> map = new HashMap();
-        for (Map.Entry<String, List<String>> entry : map.entrySet()) {
-            String k = entry.getKey();
-            List<String> v = entry.getValue();
-        }
-        boolean empty = map.isEmpty();
-
-        map.put("1111", list1);
-        System.out.println(map.get("xxx"));
-        JSONObject jsonObject = JSONObject.fromObject(map);
-        System.out.println("输出的结果是：" + jsonObject);
+        list1.add(null);
+        // collect1.size() = 2 collect1.get(0):"xx"  collect1.get(1):null
+        List<String> collect1 = list1.stream().collect(Collectors.toList());
+        // collect1.size() = 1 collect1.get(0):null
+        List<String> collect2 = list1.stream().filter(item -> StringUtils.isEmpty(item)).collect(Collectors.toList());
+        // collect1.size() = 1 collect1.get(0):"xx"
+        List<String> collect3 = list1.stream().filter(StringUtils::isNotEmpty).collect(Collectors.toList());
 
         List<Account> accountList = Lists.newArrayList();
-
         Account account1 = new Account(null, 18);
         Account account2 = new Account("hehe", 18);
         accountList.add(account1);
         accountList.add(account2);
         // java.lang.NullPointerException: element cannot be mapped to a null key
-        // Map<String, List<Account>> collect2 = accountList.stream().collect(Collectors.groupingBy(Account::getName));
+        // Map<String, List<Account>> map1 = accountList.stream().collect(Collectors.groupingBy(Account::getName));
         // System.out.println(collect2);
         // groupingBy前要进行过滤
-         Map<String, List<Account>> collect3= accountList.stream()
+         Map<String, List<Account>> map2= accountList.stream()
                  .filter(item -> StringUtils.isNotEmpty(item.getName()))
                  .collect(Collectors.groupingBy(Account::getName));
-         System.out.println(collect3);
+         System.out.println(map2);
+
+    }
+
+    @Test
+    public void test3(){
 
     }
 }
