@@ -1,6 +1,7 @@
 package convert;
 
 import com.google.common.base.Preconditions;
+import constant.StatusConsts;
 import org.junit.Test;
 
 /**
@@ -25,5 +26,16 @@ public class ConvertTest {
         UserDTO result = userDTO.convertFor(user2);
         System.out.println(result);
         Preconditions.checkNotNull(null);
+    }
+
+    @Test
+    public void testEnumConvert(){
+        String orderStatus = EnumConvert.convertKeyToValue("ORDER_STATUS", "0");
+        String orderStatus2 = StatusConsts.OrderStatusEnum.getByKey("0");
+        String orderStatusName = StatusConsts.OrderStatusEnum.getByValue("已支付");
+        System.out.println(orderStatus);
+        System.out.println(orderStatus2);
+        System.out.println(orderStatusName);
+
     }
 }
