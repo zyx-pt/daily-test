@@ -21,12 +21,15 @@ public class StreamForCollectionTest {
     public void test() {
         /** 查询集合中符合条件的总条数 */
         List<Account> accountList = new ArrayList<>();
-        accountList.add(new Account("qwe", 12, "beijing"));
+        accountList.add(new Account("qwe", 19, "beijing"));
+        accountList.add(new Account(null, 11, "beijing"));
         accountList.add(new Account("asd", 15, "shanghai"));
-        accountList.add(new Account("zxc", 18, "xiamen"));
+        accountList.add(new Account("zxc", 18, null));
         accountList.add(new Account("hehe", 21, "hangzhou"));
-        accountList.add(new Account("zyx", 24, "putian"));
-        accountList.add(new Account("zyx", 24, "putian"));
+        accountList.add(new Account("zyx", 25, "puitan1"));
+        accountList.add(new Account("zyx", 24, "putian2"));
+        accountList.add(new Account("zyx", 24, null));
+
 
         /** 获取集合中某个属性不重复的集合 */
         List<String> distinctAccountByName = accountList.stream()
@@ -36,12 +39,31 @@ public class StreamForCollectionTest {
                 .filter(item -> item.getAge() > 18).collect(Collectors.toList());
         /** 根据某一属性筛选 (去重) */
         List<Account> distinctByName = accountList.stream()
+                .filter(item -> StringUtils.isNotEmpty(item.getName()))
                 .filter(distinctByName(Account::getName)).collect(Collectors.toList());
         /** sorted 排序 */
-        List<Account> collect = accountList.stream()
+        // 按年龄升序(同理也可名字排序)
+        List<Account> accountSorted1 = accountList.stream()
                 .sorted(Comparator.comparing(Account::getAge)).collect(Collectors.toList());
+        accountSorted1.forEach(item -> System.out.println(item.getName()+"---"+item.getAge()));
+        // 按年龄降序
+        List<Account> accountSorted2 = accountList.stream()
+                .sorted(Comparator.comparing(Account::getAge).reversed()).collect(Collectors.toList());
+        System.out.println();
+        accountSorted2.forEach(item -> System.out.println(item.getName()+"---"+item.getAge()));
 
-        /** groupingBy 统计的使用 */
+        // 按名称null排后   nullsFirst->null排前
+        List<Account> accountSorted3 = accountList.stream()
+                .sorted(Comparator.comparing(Account::getName, Comparator.nullsLast(Comparator.naturalOrder())))
+                .collect(Collectors.toList());
+        System.out.println();
+        accountSorted3.forEach(item -> System.out.println(item.getName()+"---"+item.getAge()));
+
+        /**
+         * groupingBy 统计的使用
+         * 注意点：key不能为null，要使用filter进行过滤
+         *
+         */
         System.out.println("----------------groupingBy----------------");
         /** 统计集合中某一属性的个数，用Map返回 */
         Map<String, Long> nameCountMap = accountList.stream()
@@ -49,46 +71,51 @@ public class StreamForCollectionTest {
                 .collect(Collectors.groupingBy(Account::getName, Collectors.counting()));
         System.out.println("name -> count"+nameCountMap);
         /** 把集合存储到Map中，key为某个属性，value为集合 */
-        Map<Integer, List<Account>> ageToListMap = accountList.stream()
-//                .collect(Collectors.groupingBy(Account::getAge, Collectors.toList()));
-                .collect(Collectors.groupingBy(Account::getAge));
-        System.out.println("age -> list："+ageToListMap);
+        // 属性 -> 实体类（1：n）
+        Map<String, List<Account>> nameToListMap = accountList.stream()
+                .filter(item -> StringUtils.isNotEmpty(item.getName()))
+//                .collect(Collectors.groupingBy(Account::getName, Collectors.toList()));
+                .collect(Collectors.groupingBy(Account::getName));
+        System.out.println("name -> accountList："+nameToListMap);
         /** 统计后按key进行排序 */
         // TreeMap默认为按照key升序
         TreeMap<String, List<Account>> orderByNameToListMap = accountList.stream()
                 .filter(item -> StringUtils.isNotEmpty(item.getName()))
                 .collect(Collectors.groupingBy(Account::getName, TreeMap::new, Collectors.toList()));
-
         // 降序
         NavigableMap<String, List<Account>> stringListNavigableMap = orderByNameToListMap.descendingMap();
         /** 累加求和 */
         Map<String, Integer> nameToCountAgeMap = accountList.stream()
+                .filter(item -> StringUtils.isNotEmpty(item.getName()))
                 .collect(Collectors.groupingBy(Account::getName, Collectors.summingInt(Account::getAge)));
-        System.out.println("name -> ageCount："+nameToCountAgeMap);
-        /** 统计后拼接某一属性 */
+        System.out.println("name -> sumAge："+nameToCountAgeMap);
+        /** 统计某一属性，以分隔符拼接另一属性（为null也会拼接上，可以使用filter过滤） */
+        // 属性 -> 属性（1：n）
         Map<String, String> nameToJoinAddressMap = accountList.stream()
+                .filter(item -> StringUtils.isNotEmpty(item.getName()))
+//                .filter(item -> StringUtils.isNotEmpty(item.getAddress()))
                 .collect(Collectors.groupingBy(Account::getName, Collectors.mapping(Account::getAddress, Collectors.joining(","))));
         System.out.println("name -> join address："+nameToJoinAddressMap);
 
-        /** 把集合存储到Map中，key为某个属性，value为另一个属性 */
+        /**
+         * toMap的使用
+         * 把集合存储到Map中，key为某个属性，value为另一个属性或实体类
+         * 注意：属性->实体类: 其中[key可为null], [key不重复]
+         *      属性->属  性: 其中 [key不为null]，[value不为null]，[key不重复]
+         *
+         */
         System.out.println("----------------toMap----------------");
+        // 属性 -> 属性（1：1）
         Map<String, String> nameToAddressMap1 = accountList.stream()
-                .collect(Collectors.toMap(Account::getName, Account::getAddress, (oldValue, newValue)->newValue));
+                .filter(item -> StringUtils.isNotEmpty(item.getName()) && StringUtils.isNotEmpty(item.getAddress()))
+                .collect(Collectors.toMap(Account::getName, Account::getAddress, (oldValue, newValue)-> newValue));
+        // 属性 -> 属性（1：n）
         Map<String, String> nameToAddressMap2 = accountList.stream()
+                .filter(item -> StringUtils.isNotEmpty(item.getName()) && StringUtils.isNotEmpty(item.getAddress()))
                 .collect(Collectors.toMap(Account::getName, Account::getAddress, (oldValue, newValue)->oldValue+","+newValue));
-        System.out.println(nameToAddressMap1);
-        System.out.println(nameToAddressMap2);
-        /** 把集合存储到Map中，key为某个属性，value为对象 */
-//        Map<String, Account> nameToAccountMap1 = Maps.uniqueIndex(accountList, Account::getName);
-//        Map<String, Account> nameToAccountMap2 = accountList.stream()
-//                .collect(Collectors.toMap(Account::getName, Function.identity()));
-        /** 注意点：转换成Map时，集合中作为key的属性存在重复，则会报错duplicate key，需要另行处理 */
-        // duplicate key的处理方案
-        Map<String, Account> nameToAccountMap3 = accountList.stream()
-                .collect(Collectors.toMap(Account::getName, Function.identity(), (v1, v2) -> v2));
-        System.out.println(nameToAccountMap3);
-        // Map的value可以储存一个list，把重复key的值放入list，再存到value中
-        Map<String, List<String>> nameToList = accountList.stream()
+        // 这种处理方法可以不用判断key和value是否为null
+        // 属性 -> 属性（1：n）
+        Map<String, List<String>> nameToAddressMap3 = accountList.stream()
                 .collect(Collectors.toMap(Account::getName,
                         item -> {
                             List<String> getAddressList = new ArrayList<>();
@@ -99,7 +126,19 @@ public class StreamForCollectionTest {
                             oldList.addAll(newList);
                             return oldList;
                         }));
-        System.out.println(nameToList);
+        System.out.println("name -> address："+nameToAddressMap1);
+        System.out.println("name -> join address with ','："+nameToAddressMap2);
+        System.out.println("name -> addressList："+nameToAddressMap3);
+
+        // 属性 -> 实体类（1：1）
+//        Map<String, Account> nameToAccountMap1 = Maps.uniqueIndex(accountList, Account::getName);
+//        Map<String, Account> nameToAccountMap2 = accountList.stream()
+//                .collect(Collectors.toMap(Account::getName, Function.identity()));
+        // 注意点：转换成Map时，集合中作为key的属性存在重复，则会报错duplicate key，需要另行处理
+        // duplicate key的处理方案
+        Map<String, Account> nameToAccountMap3 = accountList.stream()
+                .collect(Collectors.toMap(Account::getName, Function.identity(), (v1, v2) -> v2));
+        System.out.println("name -> account："+nameToAccountMap3);
 
         /** String-List-Map互转 */
         String str1 = "a,b,c";

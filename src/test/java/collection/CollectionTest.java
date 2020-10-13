@@ -4,6 +4,7 @@ import entity.Account;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
+import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.stream.Collectors;
@@ -132,7 +133,7 @@ public class CollectionTest {
             }
         }
         System.out.println(list1);
-        // 反编译结果
+        // 反编译结果如下
         ArrayList list2 = new ArrayList();
         list2.add("Tom");
         list2.add("Jack");
@@ -155,7 +156,7 @@ public class CollectionTest {
         System.out.println(list2);
 
 
-        // 3.使用Java 8中提供的filter过滤
+        // 解决方法：1.使用Java 8中提供的filter过滤
         List<String> list3 = new ArrayList<String>();
         list3.add("Tom");
         list3.add("Jack");
@@ -164,7 +165,7 @@ public class CollectionTest {
         list3 = list3.stream().filter(userName -> !userName.equalsIgnoreCase("Jack")).collect(Collectors.toList());
         System.out.println(list3);
 
-        // 4.直接使用fail-safe的集合类
+        // 解决方法：2.直接使用fail-safe的集合类
         ConcurrentLinkedDeque<String> list4 = new ConcurrentLinkedDeque<String>();
         list4.add("Tom");
         list4.add("Jack");
@@ -179,25 +180,62 @@ public class CollectionTest {
     }
 
     /**
-     * @Description: 测试lambda获取集合中某个属性(不为空)集合
+     * @Description: 测试ArrayList扩容--每次会扩容为原来的1.5倍，奇数的话会丢掉小数
+     * int newCapacity = oldCapacity + (oldCapacity >> 1);
      *
      * @Author: zhengyongxina
-     * @Date: 2020/6/16 10:48
+     * @Date: 2020/10/12 14:08
      * @param
      * @return: void
      */
     @Test
-    public void test(){
-        List<Account> accounts = new ArrayList();
-        accounts.add(new Account("zyx", 18));
-        accounts.add(new Account("hh", 18));
-        accounts.add(new Account(null, 18));
-        List<String> names1 = accounts.stream().map(Account::getName).collect(Collectors.toList());
-        System.out.println(names1);// [zyx, hh, null]
-        List<String> names2 = accounts.stream()
-                .filter(item->StringUtils.isNotBlank(item.getName()))
-                .map(Account::getName)
-                .collect(Collectors.toList());
-        System.out.println(names2);// [zyx, hh]
+    public void testArrayListGrow(){
+        List<Integer> arrayList = new ArrayList<>();
+        System.out.println(getArrayListCapacity(arrayList)); // 0
+        //增加元素，使其扩容
+        arrayList.add(0);
+        System.out.println(getArrayListCapacity(arrayList)); // 10
+
+        for(int i = 0; i < 10; ++i)
+            arrayList.add(0);
+        System.out.println(getArrayListCapacity(arrayList)); // 15
+
+        for(int i = 0; i < 5; ++i)
+            arrayList.add(0);
+        System.out.println(getArrayListCapacity(arrayList)); // 22
+    }
+
+    public static int getArrayListCapacity(List<?> arrayList) {
+        Class<ArrayList> arrayListClass = ArrayList.class;
+        try {
+            Field field = arrayListClass.getDeclaredField("elementData");
+            field.setAccessible(true);
+            Object[] objects = (Object[])field.get(arrayList);
+            return objects.length;
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
+    @Test
+    public void testArrayListEnsureCapacity(){
+        ArrayList<Object> list = new ArrayList<Object>();
+        final int N = 10000000;
+        long startTime1 = System.currentTimeMillis();
+        for (int i = 0; i < N; i++) {
+            list.add(i);
+        }
+        long endTime1 = System.currentTimeMillis();
+        System.out.println("使用ensureCapacity方法前："+(endTime1 - startTime1)); // 2870
+
+        ArrayList<Object> list2 = new ArrayList<Object>();
+        long startTime2 = System.currentTimeMillis();
+        list2.ensureCapacity(N);
+        for (int i = 0; i < N; i++) {
+            list2.add(i);
+        }
+        long endTime2 = System.currentTimeMillis();
+        System.out.println("使用ensureCapacity方法后："+(endTime2 - startTime2)); // 2480
     }
 }
