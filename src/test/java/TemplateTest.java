@@ -1,14 +1,21 @@
+import com.google.common.base.CaseFormat;
 import com.google.common.collect.Lists;
 import entity.Account;
 import net.sf.json.JSONObject;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
+import org.springframework.core.annotation.OrderUtils;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -83,6 +90,22 @@ public class TemplateTest {
 
     @Test
     public void test3(){
-        System.out.println(Integer.MAX_VALUE);
+        System.out.println( Calendar.JANUARY);
+        BigDecimal weight = new BigDecimal("0");
+        System.out.println(weight.divide(new BigDecimal("10000")));
+        set(weight);
+        List<String> list = Lists.newArrayList();
+        setList(list);
+        list.forEach(x -> System.out.println(x));
+
+
+    }
+
+    private void setList(List<String> list) {
+        list.add("xxxx");
+    }
+
+    public void set(BigDecimal weight){
+        weight = weight.add(BigDecimal.ONE);
     }
 }
