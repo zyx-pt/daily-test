@@ -4,6 +4,7 @@ import entity.Account;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -22,14 +23,15 @@ public class StreamForCollectionTest {
         /** 查询集合中符合条件的总条数 */
         List<Account> accountList = new ArrayList<>();
         accountList.add(new Account("qwe", 19, "beijing"));
-        accountList.add(new Account(null, 11, "beijing"));
+        accountList.add(new Account("xx", 11, "beijing"));
         accountList.add(new Account("asd", 15, "shanghai"));
         accountList.add(new Account("zxc", 18, null));
         accountList.add(new Account("hehe", 21, "hangzhou"));
         accountList.add(new Account("zyx", 25, "puitan1"));
         accountList.add(new Account("zyx", 24, "putian2"));
         accountList.add(new Account("zyx", 24, null));
-
+        accountList.add(new Account("123", 24, "putian2"));
+        accountList.add(new Account("22", 24, null));
 
         /** 获取集合中某个属性不重复的集合 */
         List<String> distinctAccountByName = accountList.stream()
@@ -51,6 +53,9 @@ public class StreamForCollectionTest {
                 .sorted(Comparator.comparing(Account::getAge).reversed()).collect(Collectors.toList());
         System.out.println();
         accountSorted2.forEach(item -> System.out.println(item.getName()+"---"+item.getAge()));
+        // 使用Collections.sort(list, Comparator)对原list排序
+        Collections.sort(accountList, Comparator.comparingInt(Account::getAge));
+        Collections.sort(accountList, Comparator.comparingInt(Account::getAge).reversed());
 
         // 按名称null排后   nullsFirst->null排前
         List<Account> accountSorted3 = accountList.stream()

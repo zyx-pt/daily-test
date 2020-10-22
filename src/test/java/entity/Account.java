@@ -1,12 +1,14 @@
 package entity;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 public class Account {
     private String name;
-    private int age;
+    private Integer age;
     private String address;
     private Date birthDay;
+    private BigDecimal amount;
 
     public Account() {
     }
@@ -34,10 +36,9 @@ public class Account {
         return age;
     }
 
-    public void setAge(int age) {
+    public void setAge(Integer age) {
         this.age = age;
     }
-
     public String getAddress() {
         return address;
     }
@@ -52,5 +53,13 @@ public class Account {
 
     public void setBirthDay(Date birthDay) {
         this.birthDay = birthDay;
+    }
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
     }
 }
